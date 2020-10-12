@@ -21,7 +21,7 @@ for r in Rows:
     for c in Cols:
         prob += lpSum([choices[v][r][c] for v in Vals]) == 1, ""
 
-# The row, column and box constraints are added for each value
+# The row and column constraints are added for each value
 for r in Rows:
     prob += lpSum([choices["Q"][r][c] for c in Cols]) == 1, ""
 
