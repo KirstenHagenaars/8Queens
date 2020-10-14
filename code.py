@@ -1,56 +1,49 @@
 from pulp import *
 
-Sequence = [0, 1, 2, 3, 4, 5, 6, 7]
-
-# The Vals, Rows and Cols sequences all follow this form
+# Represents the possible values of a cell
 Vals = ["Q", "-"]
+
+# Represents the rows and columns of the board
+Sequence = [0, 1, 2, 3, 4, 5, 6, 7]
 Rows = Sequence
 Cols = Sequence
 
-# The prob variable is created to contain the problem data
 prob = LpProblem("8 Queens Problem", LpMinimize)
-
-# The problem variables are created
 choices = LpVariable.dicts("Choice", (Vals, Rows, Cols), 0, 1, LpInteger)
 
-# The arbitrary objective function is added
-prob += 0, "Arbitrary Objective Function"
+# We do not want a specific objective, therefore we just have 0
+prob += 0, "objective function"
 
-# A constraint ensuring that only one value can be in each square is created
+# This constraint ensures that every cell will get exactly one assignment of a value
 for r in Rows:
     for c in Cols:
         prob += lpSum([choices[v][r][c] for v in Vals]) == 1, ""
 
-# The row and column constraints are added for each value
+# These constraints ensure that all rows and all columns have exactly 1 queen
 for r in Rows:
     prob += lpSum([choices["Q"][r][c] for c in Cols]) == 1, ""
 
 for c in Cols:
     prob += lpSum([choices["Q"][r][c] for r in Rows]) == 1, ""
 
-# the diagonal constraint
+# These constraints ensure that there is at most one queen per diagonal
 for c in range(0, 17):
     # from top left to bottom right
-    prob += lpSum([choices["Q"][i][c + i - 8] for i in Sequence if c + i < 16 and c + i >= 8]) <= 1, ""
+    prob += lpSum([choices["Q"][i][c + i - 8] for i in Sequence if 16 > c + i >= 8]) <= 1, ""
     # from top right to bottom left
-    prob += lpSum([choices["Q"][i][c - i] for i in Sequence if c - i < 8 and c - i >= 0]) <= 1, ""
+    prob += lpSum([choices["Q"][i][c - i] for i in Sequence if 8 > c - i >= 0]) <= 1, ""
 
-
-# The problem data is written to an .lp file
 prob.writeLP("8Queens.lp")
 
-# The problem is solved using PuLP's choice of Solver
+# Solve the problem
 prob.solve()
-
-# The status of the solution is printed to the screen
 print("Status:", LpStatus[prob.status])
 
+# Print solution
 for r in Rows:
     for c in Cols:
-        if value(choices["Q"][r][c]) == 1:
+        if value(choices["Q"][r][c]):
             print('Q ', end='')
-            # check x vs y
-            # TODO simplify print statements
         else:
             print("_ ", end='')
     print(" ")
