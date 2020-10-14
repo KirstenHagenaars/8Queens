@@ -27,9 +27,9 @@ for c in Cols:
     prob += lpSum([choices["Q"][r][c] for r in Rows]) == 1, ""
 
 # These constraints ensure that there is at most one queen per diagonal
-for c in range(0, 17):
+for c in range(0, 14):
     # from top left to bottom right
-    prob += lpSum([choices["Q"][i][c + i - 8] for i in Sequence if 16 > c + i >= 8]) <= 1, ""
+    prob += lpSum([choices["Q"][i][c + i - 5] for i in Sequence if 13 > c + i >= 5]) <= 1, ""
     # from top right to bottom left
     prob += lpSum([choices["Q"][i][c - i] for i in Sequence if 8 > c - i >= 0]) <= 1, ""
 
